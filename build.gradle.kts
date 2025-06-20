@@ -20,6 +20,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     
     // Database
     runtimeOnly("com.h2database:h2")
@@ -33,6 +34,9 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-core")
+
+    // https://mvnrepository.com/artifact/com.zerodhatech.kiteconnect/kiteconnect
+    implementation("com.zerodhatech.kiteconnect:kiteconnect:3.5.0")
 }
 
 tasks.test {
