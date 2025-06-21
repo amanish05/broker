@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
     // Swagger/OpenAPI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
@@ -42,6 +43,15 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.zerodhatech.kiteconnect/kiteconnect
     implementation("com.zerodhatech.kiteconnect:kiteconnect:3.5.0")
+
+    // Jackson for JSON logging
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+}
+
+configurations.all {
+    exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+    exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
+    exclude(group = "ch.qos.logback")
 }
 
 tasks.test {

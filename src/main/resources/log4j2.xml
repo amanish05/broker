@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <JsonLayout eventEol="true" compact="true" properties="true" />
+        </Console>
+        <Async name="AsyncConsole">
+            <AppenderRef ref="Console" />
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="AsyncConsole" />
+        </Root>
+        <Logger name="org.springframework" level="warn" additivity="false">
+            <AppenderRef ref="AsyncConsole" />
+        </Logger>
+    </Loggers>
+</Configuration>

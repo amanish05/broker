@@ -1,5 +1,6 @@
 package org.mandrin.rain.broker.controller;
 
+import com.zerodhatech.ticker.KiteTicker;
 import jakarta.servlet.http.HttpSession;
 import org.mandrin.rain.broker.service.KiteTickerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,16 @@ public class TickerController {
         this.tickerService = tickerService;
     }
 
+    @PostMapping("/connect")
+    public String connect(HttpSession session) {
+        KiteTicker ticker = tickerService.connect(session);
+        return "connected";
+    }
+
     /**
      * Subscribe the current user to a comma separated list of instrument
      * tokens.
      *
-     * @param tokens   CSV list of instrument tokens
      * @param session  current HTTP session containing the access token
      * @return success message
      */

@@ -1,13 +1,13 @@
 package org.mandrin.rain.broker.service;
 
 import com.zerodhatech.ticker.KiteTicker;
-import com.zerodhatech.ticker.OnConnect;
-import com.zerodhatech.ticker.OnDisconnect;
-import com.zerodhatech.ticker.OnTicks;
 import jakarta.servlet.http.HttpSession;
 import org.mandrin.rain.broker.config.KiteConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.List;
  */
 @Service
 public class KiteTickerService {
+    private static final Logger logger = LogManager.getLogger(KiteTickerService.class);
+    
     @Value("${kite.api_key}")
     private String apiKey;
 
@@ -35,11 +37,11 @@ public class KiteTickerService {
     private synchronized KiteTicker getOrCreateTicker(String accessToken) {
         if (kiteTicker == null || !kiteTicker.isConnectionOpen()) {
             kiteTicker = new KiteTicker(apiKey, accessToken);
-            kiteTicker.setOnConnectedListener(() -> System.out.println("KiteTicker connected"));
-            kiteTicker.setOnDisconnectedListener(() -> System.out.println("KiteTicker disconnected"));
+            kiteTicker.setOnConnectedListener(() -> logger.info("KiteTicker connected"));
+            kiteTicker.setOnDisconnectedListener(() -> logger.info("KiteTicker disconnected"));
             kiteTicker.setOnTickerArrivalListener(ticks -> {
                 for (var tick : ticks) {
-                    System.out.println("Tick: " + tick);
+                    logger.info("Tick: {}", tick);
                 }
             });
             kiteTicker.connect();
@@ -54,12 +56,12 @@ public class KiteTickerService {
      * @param session current user session containing the access token
      * @throws IllegalStateException if the token is missing
      */
-    public void connect(HttpSession session) {
+    public KiteTicker connect(HttpSession session) {
         String token = (String) session.getAttribute(KiteConstants.KITE_ACCESS_TOKEN_SESSION);
         if (token == null || token.isEmpty()) {
             throw new IllegalStateException("Access token not found in session");
         }
-        getOrCreateTicker(token);
+        return getOrCreateTicker(token);
     }
 
     /**
