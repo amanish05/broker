@@ -8,16 +8,56 @@
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 80px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 40px; text-align: center; }
         h1 { color: #2c3e50; }
+        h2 { color: #34495e; margin-top: 40px; }
         p { color: #555; }
         a { color: #3498db; text-decoration: none; }
         a:hover { text-decoration: underline; }
+        #portfolio-row { margin-top: 40px; }
+        #holdings-table-container { margin-top: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        button { background:#e74c3c;color:#fff;border:none;padding:8px 16px;border-radius:4px;cursor:pointer; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Broker Online</h1>
-        <p>This is the default home page UI.</p>
-        <p>Explore <a href="/home">/home</a> or use the navigation above.</p>
+        <div style="margin-bottom: 32px;">
+            <h1>Welcome to Broker Online</h1>
+            <p>This is the default home page UI.</p>
+            <p>Explore <a href="/home">/home</a> or use the navigation above.</p>
+            <form action="/logout" method="post" style="margin-top: 16px;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+        <div id="portfolio-row">
+            <h2>Your Portfolio Holdings</h2>
+            <div id="holdings-table-container">
+                <p>Loading holdings...</p>
+            </div>
+        </div>
     </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        fetch('/api/portfolio/holdings')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const holdings = data.data;
+                    let html = '<table style="width:100%;margin-top:16px;"><tr><th>Symbol</th><th>Exchange</th><th>Quantity</th><th>Avg Price</th><th>Last Price</th><th>P&amp;L</th></tr>';
+                    holdings.forEach(h => {
+                        html += `<tr><td>${h.tradingsymbol}</td><td>${h.exchange}</td><td>${h.quantity}</td><td>${h.average_price}</td><td>${h.last_price}</td><td>${h.pnl}</td></tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('holdings-table-container').innerHTML = html;
+                } else {
+                    document.getElementById('holdings-table-container').innerHTML = '<p>Failed to load holdings.</p>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('holdings-table-container').innerHTML = '<p>Error loading holdings.</p>';
+            });
+        /*]]>*/
+    </script>
 </body>
 </html>

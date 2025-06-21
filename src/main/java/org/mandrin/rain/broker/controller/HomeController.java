@@ -1,4 +1,4 @@
-package org.mandrin.rain.broker;
+package org.mandrin.rain.broker.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

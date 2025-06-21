@@ -21,6 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     
     // Database
     runtimeOnly("com.h2database:h2")
@@ -34,6 +35,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-inline:5.2.0") // Mockito inline for mocking final classes (needed for RestTemplate and Java 17+)
 
     // https://mvnrepository.com/artifact/com.zerodhatech.kiteconnect/kiteconnect
     implementation("com.zerodhatech.kiteconnect:kiteconnect:3.5.0")
