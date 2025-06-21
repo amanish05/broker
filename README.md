@@ -51,3 +51,13 @@
 ---
 
 For more details, see the comments in `application.properties` and `.env.example` (if provided).
+
+## WebSocket Streaming
+
+The application exposes `/api/ticker/subscribe` and `/api/ticker/disconnect` REST
+endpoints which delegate to `KiteTickerService`. The service opens a WebSocket
+connection to Kite using the `kite_access_token` stored in the session. Ticks
+received from the stream are currently printed to the console.
+
+Swagger documentation is available once the application is running at
+`http://localhost:8080/swagger-ui.html`.
