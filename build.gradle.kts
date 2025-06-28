@@ -51,6 +51,9 @@ dependencies {
 
     // Jackson for JSON logging
     implementation("com.fasterxml.jackson.core:jackson-databind")
+
+    // DevTools for automatic restarts during development
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 configurations.all {
@@ -61,6 +64,7 @@ configurations.all {
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
 }
 
 tasks.withType<JavaCompile> {

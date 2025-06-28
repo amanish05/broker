@@ -6,8 +6,7 @@ import org.mandrin.rain.broker.service.InstrumentService;
 import org.mandrin.rain.broker.repository.InstrumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,16 +22,8 @@ class InstrumentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     private InstrumentService service;
-
-    @TestConfiguration
-    static class Config {
-        @Bean
-        public InstrumentService instrumentService() {
-            return mock(InstrumentService.class);
-        }
-    }
 
     @Test
     void load_ShouldReturnOk() throws Exception {
