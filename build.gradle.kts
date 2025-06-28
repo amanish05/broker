@@ -18,6 +18,7 @@ repositories {
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -29,6 +30,10 @@ dependencies {
     
     // Database
     runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.postgresql:postgresql")
+
+    // CSV parsing
+    implementation("org.apache.commons:commons-csv:1.10.0")
     
     // Utility
     implementation("org.projectlombok:lombok")

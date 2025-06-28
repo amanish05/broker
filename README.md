@@ -4,12 +4,15 @@
 
 1. **Configure Environment Variables:**
    - Copy `.env` to your local project root (do not commit this file).
-   - Fill in your secrets:
-     ```env
-     KITE_API_KEY=your_real_api_key_here
-     KITE_API_SECRET=your_real_api_secret_here
-     KITE_USER_ID=your_real_user_id_here
-     ```
+ - Fill in your secrets:
+    ```env
+    KITE_API_KEY=your_real_api_key_here
+    KITE_API_SECRET=your_real_api_secret_here
+    KITE_USER_ID=your_real_user_id_here
+    POSTGRES_URL=jdbc:postgresql://localhost:5432/broker
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=your_db_password
+    ```
 
 2. **Install Dependencies & Build:**
    ```zsh
@@ -51,6 +54,14 @@
 ---
 
 For more details, see the comments in `application.properties` and `.env.example` (if provided).
+
+### Loading Instrument Data
+
+An endpoint `/api/instruments/{exchange}` downloads the instrument CSV from Kite
+and stores it in the configured Postgres database. Invoke it with a POST request
+and provide exchanges like `nse`, `bse`, `bfo`, etc. Additional GET endpoints
+`/api/instruments/exchanges` and `/api/instruments/names` expose stored
+exchanges and instrument names for populating UI drop-downs.
 
 ## WebSocket Streaming
 

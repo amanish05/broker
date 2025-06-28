@@ -39,7 +39,9 @@
         <div id="action-row" style="margin-top:40px;">
             <h2>API Actions</h2>
             <form id="api-action-form" style="margin-bottom:16px;">
-                <input type="text" id="api-input" placeholder="Enter instrument tokens (comma separated)" style="padding:8px;width:60%;border-radius:4px;border:1px solid #ccc;">
+                <select id="exchange-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;"></select>
+                <input type="text" id="api-input" list="name-list" placeholder="Instrument name" style="padding:8px;width:60%;border-radius:4px;border:1px solid #ccc;">
+                <datalist id="name-list"></datalist>
                 <button type="submit">Subscribe Ticker</button>
             </form>
             <button id="disconnect-btn" style="background:#888;">Disconnect Ticker</button>
@@ -74,14 +76,39 @@
                 document.getElementById('holdings-table-container').innerHTML = '<p>Error loading holdings.</p>';
             });
 
+        const nameTokenMap = {};
+        function loadInstrumentData() {
+            fetch('/api/instruments/exchanges')
+                .then(r => r.json())
+                .then(list => {
+                    const sel = document.getElementById('exchange-select');
+                    sel.innerHTML = list.map(e => `<option value="${e}">${e}</option>`).join('');
+                });
+            fetch('/api/instruments/names')
+                .then(r => r.json())
+                .then(list => {
+                    const dl = document.getElementById('name-list');
+                    dl.innerHTML = '';
+                    list.forEach(item => {
+                        nameTokenMap[item.name] = item.instrumentToken;
+                        const opt = document.createElement('option');
+                        opt.value = item.name;
+                        dl.appendChild(opt);
+                    });
+                });
+        }
+        loadInstrumentData();
+
         // API action form for ticker subscribe
         document.getElementById('api-action-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const tokens = document.getElementById('api-input').value;
+            const name = document.getElementById('api-input').value;
+            const token = nameTokenMap[name];
+            if (!token) { return; }
             fetch('/api/ticker/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'tokens=' + encodeURIComponent(tokens)
+                body: 'tokens=' + encodeURIComponent(token)
             })
             .then(res => res.text())
             .then(msg => {
