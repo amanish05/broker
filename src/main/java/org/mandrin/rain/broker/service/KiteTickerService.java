@@ -5,9 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import org.mandrin.rain.broker.config.KiteConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,8 @@ import java.util.List;
  * subscribe to instrument tokens.
  */
 @Service
+@Slf4j
 public class KiteTickerService {
-    private static final Logger logger = LogManager.getLogger(KiteTickerService.class);
     
     @Value("${kite.api_key}")
     private String apiKey;
@@ -37,11 +35,11 @@ public class KiteTickerService {
     private synchronized KiteTicker getOrCreateTicker(String accessToken) {
         if (kiteTicker == null || !kiteTicker.isConnectionOpen()) {
             kiteTicker = new KiteTicker(apiKey, accessToken);
-            kiteTicker.setOnConnectedListener(() -> logger.info("KiteTicker connected"));
-            kiteTicker.setOnDisconnectedListener(() -> logger.info("KiteTicker disconnected"));
+            kiteTicker.setOnConnectedListener(() -> log.info("KiteTicker connected"));
+            kiteTicker.setOnDisconnectedListener(() -> log.info("KiteTicker disconnected"));
             kiteTicker.setOnTickerArrivalListener(ticks -> {
                 for (var tick : ticks) {
-                    logger.info("Tick: {}", tick);
+                    log.info("Tick: {}", tick);
                 }
             });
             kiteTicker.connect();
@@ -74,6 +72,7 @@ public class KiteTickerService {
     public void subscribe(HttpSession session, List<Long> tokens) {
         connect(session);
         ArrayList<Long> list = new ArrayList<>(tokens);
+        log.info("Subscribing to {} instruments", list.size());
         kiteTicker.subscribe(list);
         kiteTicker.setMode(list, KiteTicker.modeFull);
     }
@@ -83,6 +82,7 @@ public class KiteTickerService {
      */
     public void disconnect() {
         if (kiteTicker != null) {
+            log.info("Disconnecting ticker");
             kiteTicker.disconnect();
         }
     }

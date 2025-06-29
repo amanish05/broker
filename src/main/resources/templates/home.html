@@ -40,12 +40,27 @@
             <h2>Subscribe Instrument</h2>
             <form id="api-action-form" style="margin-bottom:16px;">
                 <select id="exchange-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;"></select>
-                <input type="text" id="api-input" list="name-list" placeholder="Instrument name" style="padding:8px;width:60%;border-radius:4px;border:1px solid #ccc;">
+                <select id="type-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;"></select>
+                <input type="text" id="api-input" list="name-list" placeholder="Instrument name" style="padding:8px;width:40%;border-radius:4px;border:1px solid #ccc;">
                 <datalist id="name-list"></datalist>
                 <button type="submit">Subscribe Ticker</button>
+                <button type="button" id="refresh-btn" style="background:#3498db;margin-left:8px;">Refresh</button>
             </form>
             <button id="disconnect-btn" style="background:#888;">Disconnect Ticker</button>
             <div id="api-action-result" style="margin-top:16px;"></div>
+        </div>
+        <div id="order-row" style="margin-top:40px;">
+            <h2>Place Order</h2>
+            <form id="order-form" style="margin-bottom:16px;">
+                <input type="number" id="order-qty" placeholder="Qty" style="padding:8px;width:60px;border-radius:4px;border:1px solid #ccc;">
+                <input type="number" id="order-price" placeholder="Price" style="padding:8px;width:80px;border-radius:4px;border:1px solid #ccc;">
+                <select id="order-side" style="padding:8px;border-radius:4px;border:1px solid #ccc;">
+                    <option value="BUY">BUY</option>
+                    <option value="SELL">SELL</option>
+                </select>
+                <button type="submit">Place Order</button>
+            </form>
+            <div id="order-result" style="margin-top:16px;"></div>
         </div>
         <div id="ticker-row">
             <h2>Live Ticker Feed</h2>
@@ -59,6 +74,7 @@
     <script src="/js/portfolio.js"></script>
     <script src="/js/instruments.js"></script>
     <script src="/js/ticker.js"></script>
+    <script src="/js/orders.js"></script>
     <script src="/js/ui.js"></script>
     <!-- End modular JS includes -->
     <script th:inline="javascript">

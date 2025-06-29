@@ -1,14 +1,5 @@
 -- NOTE: This schema file does not create the database. Please ensure the database exists before running these statements.
-CREATE DATABASE "BROKER_ZERODHA_ONLINE_DB"
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'C'
-    LC_CTYPE = 'C'
-    LOCALE_PROVIDER = 'libc'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
+
 
 CREATE TABLE IF NOT EXISTS instruments (
     instrument_token BIGINT PRIMARY KEY,
@@ -23,4 +14,23 @@ CREATE TABLE IF NOT EXISTS instruments (
     instrument_type VARCHAR(20),
     segment VARCHAR(20),
     exchange VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS trade_orders (
+    id SERIAL PRIMARY KEY,
+    instrument_token BIGINT,
+    tradingsymbol VARCHAR(50),
+    exchange VARCHAR(20),
+    transaction_type VARCHAR(10),
+    quantity INTEGER,
+    price DOUBLE PRECISION,
+    order_id VARCHAR(50),
+    placed_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id SERIAL PRIMARY KEY,
+    instrument_token BIGINT UNIQUE,
+    tradingsymbol VARCHAR(50),
+    subscribed_at TIMESTAMP
 );

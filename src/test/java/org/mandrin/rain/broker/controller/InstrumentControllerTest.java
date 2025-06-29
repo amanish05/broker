@@ -48,9 +48,19 @@ class InstrumentControllerTest {
         InstrumentRepository.NameTokenView view = mock(InstrumentRepository.NameTokenView.class);
         when(view.getInstrumentToken()).thenReturn(1L);
         when(view.getName()).thenReturn("ABC");
-        when(service.listNameTokens()).thenReturn(List.of(view));
-        mockMvc.perform(get("/api/instruments/names"))
+        when(service.listNames("NSE", "EQ")).thenReturn(List.of(view));
+        mockMvc.perform(get("/api/instruments/names")
+                .param("exchange", "NSE")
+                .param("type", "EQ"))
                 .andExpect(status().isOk());
-        verify(service).listNameTokens();
+        verify(service).listNames("NSE", "EQ");
+    }
+
+    @Test
+    void types_ShouldReturnList() throws Exception {
+        when(service.listInstrumentTypes("NSE")).thenReturn(List.of("EQ"));
+        mockMvc.perform(get("/api/instruments/types").param("exchange", "NSE"))
+                .andExpect(status().isOk());
+        verify(service).listInstrumentTypes("NSE");
     }
 }
