@@ -5,7 +5,8 @@
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <JsonLayout eventEol="true" compact="true" properties="true" />
+            <!-- pretty JSON output for easier reading -->
+            <JsonLayout eventEol="true" compact="false" properties="true" />
         </Console>
         <Async name="AsyncConsole">
             <AppenderRef ref="Console" />
