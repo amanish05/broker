@@ -60,15 +60,24 @@ For more details, see the comments in `application.properties` and `.env.example
 An endpoint `/api/instruments/{exchange}` downloads the instrument CSV from Kite
 and stores it in the configured Postgres database. Invoke it with a POST request
 and provide exchanges like `nse`, `bse`, `bfo`, etc. Additional GET endpoints
-`/api/instruments/exchanges` and `/api/instruments/names` expose stored
-exchanges and instrument names for populating UI drop-downs.
+`/api/instruments/exchanges`, `/api/instruments/types?exchange=NSE` and
+`/api/instruments/names?exchange=NSE&type=EQ` expose stored exchange,
+instrument types and instrument names for populating UI drop-downs.
 
 ## WebSocket Streaming
 
-The application exposes `/api/ticker/subscribe` and `/api/ticker/disconnect` REST
-endpoints which delegate to `KiteTickerService`. The service opens a WebSocket
-connection to Kite using the `kite_access_token` stored in the session. Ticks
-received from the stream are currently printed to the console.
+The application exposes `/api/ticker/subscribe`, `/api/ticker/subscriptions` and
+`/api/ticker/disconnect` REST endpoints. Subscribing persists the tokens in the
+`subscriptions` table and forwards them to the WebSocket via `KiteTickerService`.
+The service opens a WebSocket connection to Kite using the
+`kite_access_token` stored in the session. Ticks received from the stream are
+currently printed to the console.
+
+### Placing Orders
+
+Orders can be placed via the `/api/orders` REST endpoint. Provide a JSON body with
+`tradingsymbol`, `exchange`, `transactionType`, `quantity` and optional `price`.
+Placed orders are stored in the `trade_orders` table for later analysis.
 
 Swagger documentation is available once the application is running at
 `http://localhost:8080/swagger-ui.html`.

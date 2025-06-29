@@ -4,11 +4,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.mandrin.rain.broker.model.Instrument;
 import org.mandrin.rain.broker.repository.InstrumentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class InstrumentService {
     @Value("${kite.base-url:https://api.kite.trade}")
     private String baseUrl;
@@ -25,13 +28,8 @@ public class InstrumentService {
     private final WebClient webClient;
     private final InstrumentRepository repository;
 
-    @Autowired
-    public InstrumentService(WebClient webClient, InstrumentRepository repository) {
-        this.webClient = webClient;
-        this.repository = repository;
-    }
-
     public List<Instrument> fetchAndSave(String exchange) throws IOException {
+        log.info("Fetching instruments for exchange {}", exchange);
         String url = baseUrl + "/instruments/" + exchange;
         String body = webClient.get()
                 .uri(url)
@@ -62,14 +60,32 @@ public class InstrumentService {
             i.setExchange(r.get("exchange"));
             list.add(i);
         }
-        return repository.saveAll(list);
+        List<Instrument> saved = repository.saveAll(list);
+        log.info("Saved {} instruments for exchange {}", saved.size(), exchange);
+        return saved;
     }
 
     public List<String> listExchanges() {
-        return repository.findDistinctExchange();
+        List<String> list = repository.findDistinctExchange();
+        log.debug("listExchanges -> {}", list);
+        return list;
     }
 
     public List<InstrumentRepository.NameTokenView> listNameTokens() {
-        return repository.findNameTokenAll();
+        List<InstrumentRepository.NameTokenView> list = repository.findNameTokenAll();
+        log.debug("listNameTokens returned {} items", list.size());
+        return list;
+    }
+
+    public List<String> listInstrumentTypes(String exchange) {
+        List<String> list = repository.findDistinctInstrumentType(exchange);
+        log.debug("listInstrumentTypes for {} -> {}", exchange, list);
+        return list;
+    }
+
+    public List<InstrumentRepository.NameTokenView> listNames(String exchange, String type) {
+        List<InstrumentRepository.NameTokenView> list = repository.findNameToken(exchange, type);
+        log.debug("listNames {} {} -> {}", exchange, type, list.size());
+        return list;
     }
 }

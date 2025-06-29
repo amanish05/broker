@@ -17,4 +17,10 @@ public interface InstrumentRepository extends JpaRepository<Instrument, Long> {
 
     @Query("select i.instrumentToken as instrumentToken, i.name as name from Instrument i")
     List<NameTokenView> findNameTokenAll();
+
+    @Query("select distinct i.instrumentType from Instrument i where i.exchange = :exchange")
+    List<String> findDistinctInstrumentType(String exchange);
+
+    @Query("select i.instrumentToken as instrumentToken, i.name as name from Instrument i where i.exchange = :exchange and i.instrumentType = :type")
+    List<NameTokenView> findNameToken(String exchange, String type);
 }
