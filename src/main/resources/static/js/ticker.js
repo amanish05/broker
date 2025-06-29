@@ -4,10 +4,12 @@ let ws;
 function connectWebSocket() {
     ws = new WebSocket('ws://localhost:8080/ws/ticker');
     ws.onopen = () => {
+        console.info('WebSocket opened');
         document.getElementById('ticker-table-container').innerHTML = '<p>Connected. Waiting for data...</p>';
     };
     ws.onmessage = (event) => {
         let data = JSON.parse(event.data);
+        console.debug('Received ticks', data);
         let html = '<table style="width:100%;margin-top:16px;"><tr><th>Token</th><th>Price</th><th>Timestamp</th></tr>';
         data.forEach(tick => {
             html += `<tr><td>${tick.token}</td><td>${tick.price}</td><td>${tick.timestamp}</td></tr>`;
@@ -16,6 +18,7 @@ function connectWebSocket() {
         document.getElementById('ticker-table-container').innerHTML = html;
     };
     ws.onclose = () => {
+        console.warn('WebSocket closed');
         document.getElementById('ticker-table-container').innerHTML = '<p>WebSocket disconnected.</p>';
     };
 }
@@ -24,10 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Connect WebSocket
     let ws = new WebSocket('ws://localhost:8080/ws/ticker');
     ws.onopen = () => {
+        console.info('WebSocket opened');
         document.getElementById('ticker-table-container').innerHTML = '<p>Connected. Waiting for data...</p>';
     };
     ws.onmessage = (event) => {
         let data = JSON.parse(event.data);
+        console.debug('Received ticks', data);
         let html = '<table style="width:100%;margin-top:16px;"><tr><th>Token</th><th>Price</th><th>Timestamp</th></tr>';
         data.forEach(tick => {
             html += `<tr><td>${tick.token}</td><td>${tick.price}</td><td>${tick.timestamp}</td></tr>`;
@@ -36,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('ticker-table-container').innerHTML = html;
     };
     ws.onclose = () => {
+        console.warn('WebSocket closed');
         document.getElementById('ticker-table-container').innerHTML = '<p>WebSocket disconnected.</p>';
     };
 
@@ -43,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/ticker/subscriptions', { credentials: 'include' })
         .then(res => res.json())
         .then(data => {
+            console.debug('Current subscriptions', data);
             if (Array.isArray(data) && data.length > 0) {
                 let html = '<ul>';
                 data.forEach(token => {

@@ -59,4 +59,29 @@ class InstrumentServiceTest {
         assertEquals(1, result.size());
         verify(repo).findNameTokenAll();
     }
+
+    @Test
+    void listInstrumentTypes_ShouldDelegateToRepo() {
+        ExchangeFunction fn = mock(ExchangeFunction.class);
+        WebClient client = WebClient.builder().exchangeFunction(fn).build();
+        InstrumentRepository repo = mock(InstrumentRepository.class);
+        when(repo.findDistinctInstrumentType("NSE")).thenReturn(List.of("EQ"));
+        InstrumentService service = new InstrumentService(client, repo);
+        List<String> result = service.listInstrumentTypes("NSE");
+        assertEquals(1, result.size());
+        verify(repo).findDistinctInstrumentType("NSE");
+    }
+
+    @Test
+    void listNames_ShouldDelegate() {
+        ExchangeFunction fn = mock(ExchangeFunction.class);
+        WebClient client = WebClient.builder().exchangeFunction(fn).build();
+        InstrumentRepository repo = mock(InstrumentRepository.class);
+        InstrumentRepository.NameTokenView view = mock(InstrumentRepository.NameTokenView.class);
+        when(repo.findNameToken("NSE", "EQ")).thenReturn(List.of(view));
+        InstrumentService service = new InstrumentService(client, repo);
+        List<InstrumentRepository.NameTokenView> result = service.listNames("NSE", "EQ");
+        assertEquals(1, result.size());
+        verify(repo).findNameToken("NSE", "EQ");
+    }
 }

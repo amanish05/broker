@@ -6,12 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mandrin.rain.broker.service.SubscriptionService;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
 
 @WebMvcTest(TickerController.class)
 class TickerControllerTest {
@@ -20,6 +25,9 @@ class TickerControllerTest {
 
     @Autowired
     private KiteTickerService tickerService;
+
+    @MockBean
+    private SubscriptionService subscriptionService;
 
     @TestConfiguration
     static class KiteTickerServiceTestConfig {
@@ -50,6 +58,15 @@ class TickerControllerTest {
                 .session(session))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         org.junit.jupiter.api.Assertions.assertTrue(((KiteTickerServiceTestConfig.TestKiteTickerService)tickerService).subscribeCalled);
+        verify(subscriptionService).saveAll(anyList());
+    }
+
+    @Test
+    void subscriptions_ShouldReturnOk() throws Exception {
+        when(subscriptionService.listTokens()).thenReturn(List.of(1L));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/ticker/subscriptions"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        verify(subscriptionService).listTokens();
     }
 
     @Test

@@ -3,7 +3,6 @@ package org.mandrin.rain.broker.controller;
 import jakarta.servlet.http.HttpSession;
 import org.mandrin.rain.broker.config.ApiConstants;
 import org.mandrin.rain.broker.config.KiteConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -11,23 +10,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/portfolio")
+@RequiredArgsConstructor
+@Slf4j
 public class PortfolioController {
     @Value("${kite.api_key}")
     private String apiKey;
 
     private final RestTemplate restTemplate;
 
-    @Autowired
-    public PortfolioController(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
     @GetMapping("/holdings")
     public ResponseEntity<?> getHoldings(HttpSession session) {
+        log.info("Fetching portfolio holdings");
         String accessToken = (String) session.getAttribute(KiteConstants.KITE_ACCESS_TOKEN_SESSION);
         if (accessToken == null) {
             return ResponseEntity.status(401).body(Map.of("status", ApiConstants.STATUS_ERROR, "message", ApiConstants.NOT_AUTHENTICATED_MSG));
