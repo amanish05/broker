@@ -17,6 +17,17 @@ build/
 # Ignore local environment files
 .env
 
+# Ignore log files
+*.log
+app.log
+
+# Ignore session/cookie files
+cookies.txt
+
+# Ignore local test configurations
+/test-configs/local/
+test-results.log
+
 # (Do NOT ignore these: build.gradle.kts, gradle/, gradlew, gradlew.bat, settings.gradle.kts, src/)
 # These are required for the project to build and run on any machine.
 

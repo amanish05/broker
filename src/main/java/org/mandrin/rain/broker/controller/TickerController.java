@@ -51,9 +51,18 @@ public class TickerController {
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
         log.info("Subscribing tokens {}", list);
-        tickerService.subscribe(session, list);
-        subscriptionService.saveAll(list);
-        return "subscribed";
+        
+        try {
+            tickerService.subscribe(session, list);
+            subscriptionService.saveAll(list);
+            return "subscribed";
+        } catch (IllegalStateException e) {
+            log.error("Authentication error during subscription: {}", e.getMessage());
+            throw new RuntimeException("Authentication failed. Please login to Kite Connect first.", e);
+        } catch (Exception e) {
+            log.error("Error during ticker subscription: {}", e.getMessage());
+            throw new RuntimeException("Failed to subscribe to ticker. Please check your connection and try again.", e);
+        }
     }
 
     @GetMapping("/subscriptions")

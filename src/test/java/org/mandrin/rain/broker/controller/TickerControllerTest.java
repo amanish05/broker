@@ -2,6 +2,7 @@ package org.mandrin.rain.broker.controller;
 
 import org.junit.jupiter.api.Test;
 import org.mandrin.rain.broker.service.KiteTickerService;
+import org.mandrin.rain.broker.websocket.TickerWebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -29,15 +30,22 @@ class TickerControllerTest {
     @MockBean
     private SubscriptionService subscriptionService;
 
+    @MockBean
+    private TickerWebSocketHandler webSocketHandler;
+
     @TestConfiguration
     static class KiteTickerServiceTestConfig {
         @Bean
-        public KiteTickerService tickerService() {
-            return new TestKiteTickerService();
+        public KiteTickerService tickerService(TickerWebSocketHandler webSocketHandler) {
+            return new TestKiteTickerService(webSocketHandler);
         }
         static class TestKiteTickerService extends KiteTickerService {
             boolean subscribeCalled = false;
             boolean disconnectCalled = false;
+            
+            public TestKiteTickerService(TickerWebSocketHandler webSocketHandler) {
+                super(webSocketHandler);
+            }
             @Override
             public void subscribe(jakarta.servlet.http.HttpSession session, java.util.List<Long> tokens) {
                 subscribeCalled = true;

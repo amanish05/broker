@@ -21,7 +21,7 @@
 
 3. **Start the Application (loads .env automatically):**
    ```zsh
-   ./start-local.sh
+   ./start.sh
    ```
    This script loads environment variables from `.env` and starts the Spring Boot server.
 
@@ -55,29 +55,132 @@
 
 For more details, see the comments in `application.properties` and `.env.example` (if provided).
 
-### Loading Instrument Data
+## API Endpoints (Updated December 2024)
 
-An endpoint `/api/instruments/{exchange}` downloads the instrument CSV from Kite
-and stores it in the configured Postgres database. Invoke it with a POST request
-and provide exchanges like `nse`, `bse`, `bfo`, etc. Additional GET endpoints
-`/api/instruments/exchanges`, `/api/instruments/types?exchange=NSE` and
-`/api/instruments/names?exchange=NSE&type=EQ` expose stored exchange,
-instrument types and instrument names for populating UI drop-downs.
+### V2 API (Recommended - Reactive Router-Based)
 
-## WebSocket Streaming
+**Instrument Data Management:**
+- `POST /api/v2/instruments/refresh` - Refresh all instrument data from broker API
+- `POST /api/v2/instruments/refresh/{exchange}` - Refresh specific exchange data
+- `GET /api/v2/instruments/metadata/exchanges` - Get available exchanges
+- `GET /api/v2/instruments/metadata/types/{exchange}` - Get instrument types for exchange
+- `GET /api/v2/instruments/metadata/underlyings` - Get underlying assets (NIFTY, BANKNIFTY, etc.)
+- `GET /api/v2/instruments/metadata/expiries/{underlying}` - Get expiry dates for underlying
 
-The application exposes `/api/ticker/subscribe`, `/api/ticker/subscriptions` and
-`/api/ticker/disconnect` REST endpoints. Subscribing persists the tokens in the
-`subscriptions` table and forwards them to the WebSocket via `KiteTickerService`.
-The service opens a WebSocket connection to Kite using the
-`kite_access_token` stored in the session. Ticks received from the stream are
-currently printed to the console.
+**Filtered Instrument Queries:**
+- `GET /api/v2/instruments/all` - Get all instruments
+- `GET /api/v2/instruments/exchange/{exchange}` - Get instruments by exchange
+- `GET /api/v2/instruments/underlying/{underlying}` - Get instruments by underlying asset
+- `GET /api/v2/instruments/underlying/{underlying}/expiry/{expiry}` - Get instruments by underlying and expiry
+- `GET /api/v2/instruments/names/{exchange}/{type}` - Get instrument names for exchange/type
 
-### Placing Orders
+### Legacy API (Backward Compatible)
+- `POST /api/instruments/{exchange}` - Load instruments for exchange
+- `GET /api/instruments/exchanges` - Get exchanges
+- `GET /api/instruments/types?exchange=NSE` - Get instrument types
+- `GET /api/instruments/names?exchange=NSE&type=EQ` - Get instrument names
+- `GET /api/instruments/underlyings` - Get underlying assets
+- `GET /api/instruments/expiry-dates?underlying=NIFTY` - Get expiry dates
 
-Orders can be placed via the `/api/orders` REST endpoint. Provide a JSON body with
-`tradingsymbol`, `exchange`, `transactionType`, `quantity` and optional `price`.
-Placed orders are stored in the `trade_orders` table for later analysis.
+### WebSocket Streaming
 
-Swagger documentation is available once the application is running at
-`http://localhost:8080/swagger-ui.html`.
+**Real-time Data Streaming:**
+- `WS /ws/instruments` - Real-time instrument data and filtering
+- `WS /ws/ticker` - Market ticker data streaming
+
+**REST Endpoints for Ticker:**
+- `POST /api/ticker/subscribe` - Subscribe to instrument price feeds
+- `GET /api/ticker/subscriptions` - List active subscriptions
+- `POST /api/ticker/disconnect` - Disconnect ticker service
+
+### Trading Operations
+
+**Order Management:**
+- `POST /api/orders` - Place trading orders
+- `GET /api/orders` - List order history
+
+**Portfolio:**
+- Portfolio holdings and positions (integrated with UI)
+
+### Usage Examples
+
+```bash
+# Refresh all instruments (V2 API - Recommended)
+curl -X POST http://localhost:8080/api/v2/instruments/refresh
+
+# Get available exchanges
+curl http://localhost:8080/api/v2/instruments/metadata/exchanges
+
+# Get NIFTY instruments
+curl http://localhost:8080/api/v2/instruments/underlying/NIFTY
+
+# Get NIFTY expiry dates
+curl http://localhost:8080/api/v2/instruments/metadata/expiries/NIFTY
+
+# Get NIFTY instruments for specific expiry
+curl http://localhost:8080/api/v2/instruments/underlying/NIFTY/expiry/2024-12-26
+
+# Legacy endpoints (still work)
+curl http://localhost:8080/api/instruments/exchanges
+curl -X POST http://localhost:8080/api/instruments/NSE
+
+# Place an order
+curl -X POST http://localhost:8080/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tradingsymbol": "RELIANCE",
+    "instrumentToken": 738561,
+    "exchange": "NSE",
+    "quantity": 1,
+    "price": 2500.00,
+    "transactionType": "BUY",
+    "orderType": "LIMIT",
+    "product": "MIS"
+  }'
+
+# Subscribe to ticker data
+curl -X POST http://localhost:8080/api/ticker/subscribe \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "tokens=738561,1270529"
+```
+
+### WebSocket Examples
+
+**Connect to instrument data stream:**
+```javascript
+const ws = new WebSocket('ws://localhost:8080/ws/instruments');
+
+// Subscribe to NIFTY instruments
+ws.send(JSON.stringify({
+  action: 'subscribe_instruments',
+  filterType: 'underlying',
+  filterValue: 'NIFTY'
+}));
+
+// Real-time search
+ws.send(JSON.stringify({
+  action: 'filter_instruments',
+  query: '25000 CALL',
+  exchange: 'NSE'
+}));
+```
+
+### API Documentation
+
+- **Swagger UI**: `http://localhost:8080/swagger-ui/index.html`
+- **OpenAPI Docs**: `http://localhost:8080/v3/api-docs`
+- **Health Check**: `http://localhost:8080/actuator/health`
+
+#### API Groups in Swagger UI:
+- **All APIs** - Complete API documentation
+- **V2 Instruments** - Modern reactive instrument endpoints
+- **Legacy Instruments** - Backward compatible endpoints
+- **Trading** - Order and portfolio management
+- **Ticker** - Real-time market data
+- **Authentication** - Kite Connect OAuth
+
+#### Featured Endpoints:
+- V2 reactive endpoints with advanced filtering
+- WebSocket connection documentation
+- Legacy API compatibility reference
+- Complete request/response examples

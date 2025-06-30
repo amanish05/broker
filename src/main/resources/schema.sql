@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS instruments (
 );
 
 CREATE TABLE IF NOT EXISTS trade_orders (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     instrument_token BIGINT,
     tradingsymbol VARCHAR(50),
     exchange VARCHAR(20),
@@ -29,8 +29,12 @@ CREATE TABLE IF NOT EXISTS trade_orders (
 );
 
 CREATE TABLE IF NOT EXISTS subscriptions (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     instrument_token BIGINT UNIQUE,
     tradingsymbol VARCHAR(50),
     subscribed_at TIMESTAMP
 );
+
+-- Ensure id columns are BIGINT for JPA/Hibernate compatibility
+ALTER TABLE trade_orders ALTER COLUMN id TYPE bigint;
+ALTER TABLE subscriptions ALTER COLUMN id TYPE bigint;

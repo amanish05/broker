@@ -14,6 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/", "/home");
+                .addPathPatterns("/", "/home", "/api/**")
+                .excludePathPatterns("/login", "/kite/callback", "/logout", 
+                                   "/api/session/kite-access-token", "/api/session/status", "/api/session/validate",
+                                   "/swagger-ui/**", "/v3/api-docs/**", 
+                                   "/actuator/**", "/h2-console/**", "/js/**", "/css/**", "/images/**");
     }
 }

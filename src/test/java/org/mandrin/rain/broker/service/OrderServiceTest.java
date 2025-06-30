@@ -2,7 +2,7 @@ package org.mandrin.rain.broker.service;
 
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
-import org.mandrin.rain.broker.config.KiteConstants;
+import org.mandrin.rain.broker.config.ApiConstants;
 import org.mandrin.rain.broker.model.TradeOrder;
 import org.mandrin.rain.broker.repository.TradeOrderRepository;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ class OrderServiceTest {
         OrderService service = new OrderService(client, repo);
         setField(service, "apiKey", "key");
         HttpSession session = mock(HttpSession.class);
-        when(session.getAttribute(KiteConstants.KITE_ACCESS_TOKEN_SESSION)).thenReturn("token");
+        when(session.getAttribute(ApiConstants.KITE_ACCESS_TOKEN_SESSION)).thenReturn("token");
         TradeOrder req = new TradeOrder();
         req.setTradingsymbol("ABC");
         req.setExchange("NSE");

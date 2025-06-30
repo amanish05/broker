@@ -2,7 +2,8 @@ package org.mandrin.rain.broker.service;
 
 import com.zerodhatech.ticker.KiteTicker;
 import jakarta.servlet.http.HttpSession;
-import org.mandrin.rain.broker.config.KiteConstants;
+import org.mandrin.rain.broker.config.ApiConstants;
+import org.mandrin.rain.broker.websocket.TickerWebSocketHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,12 @@ public class KiteTickerService {
     @Value("${kite.api_key}")
     private String apiKey;
 
+    private final TickerWebSocketHandler webSocketHandler;
     private KiteTicker kiteTicker;
+
+    public KiteTickerService(TickerWebSocketHandler webSocketHandler) {
+        this.webSocketHandler = webSocketHandler;
+    }
 
     /**
      * Lazily create and connect a {@link KiteTicker} instance if one does not
@@ -34,15 +40,27 @@ public class KiteTickerService {
      */
     private synchronized KiteTicker getOrCreateTicker(String accessToken) {
         if (kiteTicker == null || !kiteTicker.isConnectionOpen()) {
+            log.info("Creating new KiteTicker with API key: {}...", apiKey.substring(0, Math.min(6, apiKey.length())));
             kiteTicker = new KiteTicker(apiKey, accessToken);
             kiteTicker.setOnConnectedListener(() -> log.info("KiteTicker connected"));
             kiteTicker.setOnDisconnectedListener(() -> log.info("KiteTicker disconnected"));
+            // Note: KiteTicker error listener interface is not easily accessible, 
+            // so we handle errors in the try-catch block below
             kiteTicker.setOnTickerArrivalListener(ticks -> {
                 for (var tick : ticks) {
-                    log.info("Tick: {}", tick);
+                    log.debug("Tick received: {}", tick);
+                    // Broadcast tick data to frontend WebSocket clients
+                    webSocketHandler.broadcastTickerData(tick);
                 }
             });
-            kiteTicker.connect();
+            
+            try {
+                kiteTicker.connect();
+                log.info("KiteTicker connection attempt completed");
+            } catch (Exception e) {
+                log.error("Failed to connect KiteTicker: {}", e.getMessage());
+                throw new RuntimeException("Unable to connect to Kite WebSocket. Please check your authentication and try again.", e);
+            }
         }
         return kiteTicker;
     }
@@ -55,10 +73,13 @@ public class KiteTickerService {
      * @throws IllegalStateException if the token is missing
      */
     public KiteTicker connect(HttpSession session) {
-        String token = (String) session.getAttribute(KiteConstants.KITE_ACCESS_TOKEN_SESSION);
+        String token = (String) session.getAttribute(ApiConstants.KITE_ACCESS_TOKEN_SESSION);
         if (token == null || token.isEmpty()) {
-            throw new IllegalStateException("Access token not found in session");
+            log.error("No access token found in session. User may not be authenticated with Kite Connect.");
+            throw new IllegalStateException("Access token not found in session. Please login to Kite Connect first.");
         }
+        
+        log.info("Found access token in session, attempting to connect to KiteTicker");
         return getOrCreateTicker(token);
     }
 

@@ -1,21 +1,36 @@
 // ticker.js
 // Handles WebSocket for live ticker feed and ticker subscribe/disconnect actions
 let ws;
+
+function initializeTicker() {
+    // Called after configuration is loaded
+    console.log('Ticker module initialized with config');
+}
+
 function connectWebSocket() {
-    ws = new WebSocket('ws://localhost:8080/ws/ticker');
+    const wsUrl = getWebSocketUrl('ticker');
+    ws = new WebSocket(wsUrl);
+    console.log('Connecting to WebSocket:', wsUrl);
     ws.onopen = () => {
         console.info('WebSocket opened');
         document.getElementById('ticker-table-container').innerHTML = '<p>Connected. Waiting for data...</p>';
     };
     ws.onmessage = (event) => {
-        let data = JSON.parse(event.data);
-        console.debug('Received ticks', data);
-        let html = '<table style="width:100%;margin-top:16px;"><tr><th>Token</th><th>Price</th><th>Timestamp</th></tr>';
-        data.forEach(tick => {
-            html += `<tr><td>${tick.token}</td><td>${tick.price}</td><td>${tick.timestamp}</td></tr>`;
-        });
-        html += '</table>';
-        document.getElementById('ticker-table-container').innerHTML = html;
+        let message = JSON.parse(event.data);
+        console.debug('Received message', message);
+        
+        if (message.type === 'connection') {
+            console.info('WebSocket connection confirmed:', message.status);
+            return;
+        }
+        
+        if (message.type === 'ticker' && message.data) {
+            let tick = message.data;
+            let html = '<table style="width:100%;margin-top:16px;"><tr><th>Token</th><th>Last Price</th><th>Volume</th><th>Change</th></tr>';
+            html += `<tr><td>${tick.instrumentToken}</td><td>${tick.lastPrice}</td><td>${tick.volumeTraded}</td><td>${tick.netChange}</td></tr>`;
+            html += '</table>';
+            document.getElementById('ticker-table-container').innerHTML = html;
+        }
     };
     ws.onclose = () => {
         console.warn('WebSocket closed');
@@ -31,14 +46,21 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('ticker-table-container').innerHTML = '<p>Connected. Waiting for data...</p>';
     };
     ws.onmessage = (event) => {
-        let data = JSON.parse(event.data);
-        console.debug('Received ticks', data);
-        let html = '<table style="width:100%;margin-top:16px;"><tr><th>Token</th><th>Price</th><th>Timestamp</th></tr>';
-        data.forEach(tick => {
-            html += `<tr><td>${tick.token}</td><td>${tick.price}</td><td>${tick.timestamp}</td></tr>`;
-        });
-        html += '</table>';
-        document.getElementById('ticker-table-container').innerHTML = html;
+        let message = JSON.parse(event.data);
+        console.debug('Received message', message);
+        
+        if (message.type === 'connection') {
+            console.info('WebSocket connection confirmed:', message.status);
+            return;
+        }
+        
+        if (message.type === 'ticker' && message.data) {
+            let tick = message.data;
+            let html = '<table style="width:100%;margin-top:16px;"><tr><th>Token</th><th>Last Price</th><th>Volume</th><th>Change</th></tr>';
+            html += `<tr><td>${tick.instrumentToken}</td><td>${tick.lastPrice}</td><td>${tick.volumeTraded}</td><td>${tick.netChange}</td></tr>`;
+            html += '</table>';
+            document.getElementById('ticker-table-container').innerHTML = html;
+        }
     };
     ws.onclose = () => {
         console.warn('WebSocket closed');

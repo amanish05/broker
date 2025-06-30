@@ -19,7 +19,8 @@ class AuthControllerTest {
     static class KiteAuthServiceTestConfig {
         @Bean
         public org.mandrin.rain.broker.service.KiteAuthService kiteAuthService() {
-            return new org.mandrin.rain.broker.service.KiteAuthService() {
+            org.springframework.core.env.Environment mockEnvironment = org.mockito.Mockito.mock(org.springframework.core.env.Environment.class);
+            return new org.mandrin.rain.broker.service.KiteAuthService(mockEnvironment) {
                 @Override
                 public String getLoginUrl() {
                     return "https://kite.zerodha.com/oauth/authorize?api_key=test_key";

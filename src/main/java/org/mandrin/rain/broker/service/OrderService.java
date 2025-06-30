@@ -2,7 +2,7 @@ package org.mandrin.rain.broker.service;
 
 import jakarta.servlet.http.HttpSession;
 import org.mandrin.rain.broker.config.ApiConstants;
-import org.mandrin.rain.broker.config.KiteConstants;
+import org.mandrin.rain.broker.config.ApiConstants;
 import org.mandrin.rain.broker.model.TradeOrder;
 import org.mandrin.rain.broker.repository.TradeOrderRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +35,7 @@ public class OrderService {
      */
     public TradeOrder placeOrder(HttpSession session, TradeOrder req) {
         log.info("Placing order for {} qty {}", req.getTradingsymbol(), req.getQuantity());
-        String accessToken = (String) session.getAttribute(KiteConstants.KITE_ACCESS_TOKEN_SESSION);
+        String accessToken = (String) session.getAttribute(ApiConstants.KITE_ACCESS_TOKEN_SESSION);
         if (accessToken == null) {
             throw new IllegalStateException(ApiConstants.NOT_AUTHENTICATED_MSG);
         }

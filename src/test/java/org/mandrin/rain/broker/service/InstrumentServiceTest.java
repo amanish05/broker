@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -26,13 +27,18 @@ class InstrumentServiceTest {
         when(fn.exchange(any(ClientRequest.class))).thenReturn(Mono.just(resp));
         WebClient client = WebClient.builder().exchangeFunction(fn).build();
         InstrumentRepository repo = mock(InstrumentRepository.class);
-        when(repo.saveAll(anyList())).thenAnswer(inv -> inv.getArgument(0));
+        
+        // Mock the individual save calls used by the updated service
+        when(repo.save(any(Instrument.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(repo.findById(anyLong())).thenReturn(Optional.empty());
+        when(repo.findByExchange(anyString())).thenReturn(List.of());
+        
         InstrumentService service = new InstrumentService(client, repo);
         List<Instrument> list = service.fetchAndSave("nse");
         assertEquals(1, list.size());
         Instrument i = list.get(0);
         assertEquals(1L, i.getInstrumentToken());
-        verify(repo, times(1)).saveAll(anyList());
+        verify(repo, times(1)).save(any(Instrument.class));
     }
 
     @Test

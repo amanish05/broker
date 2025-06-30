@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
-import org.mandrin.rain.broker.config.KiteConstants;
+import org.mandrin.rain.broker.config.ApiConstants;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +28,7 @@ class AuthInterceptorTest {
         HttpSession session = mock(HttpSession.class);
         when(request.getRequestURI()).thenReturn("/home");
         when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute(KiteConstants.KITE_ACCESS_TOKEN_SESSION)).thenReturn("token");
+        when(session.getAttribute(ApiConstants.KITE_ACCESS_TOKEN_SESSION)).thenReturn("token");
         assertTrue(interceptor.preHandle(request, response, new Object()));
     }
 }

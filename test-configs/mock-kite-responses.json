@@ -1,0 +1,390 @@
+{
+  "description": "Mock Kite Connect API responses for testing",
+  "version": "1.0.0",
+  "responses": {
+    "profile": {
+      "user_type": "individual",
+      "email": "test@example.com", 
+      "user_name": "Test User",
+      "user_shortname": "Test",
+      "broker": "ZERODHA",
+      "exchanges": ["NSE", "BSE", "NFO", "CDS", "MCX"],
+      "products": ["CNC", "MIS", "NRML"],
+      "order_types": ["MARKET", "LIMIT", "SL", "SL-M"],
+      "user_id": "test_user",
+      "api_key": "test_api_key_12345"
+    },
+    "holdings": [
+      {
+        "tradingsymbol": "RELIANCE",
+        "exchange": "NSE",
+        "instrument_token": 738561,
+        "isin": "INE002A01018",
+        "product": "CNC",
+        "price": 0,
+        "quantity": 10,
+        "used_quantity": 0,
+        "t1_quantity": 0,
+        "realised_quantity": 10,
+        "authorised_quantity": 10,
+        "authorised_date": "2024-01-15 00:00:00",
+        "opening_quantity": 10,
+        "collateral_quantity": 0,
+        "collateral_type": "",
+        "discrepancy": false,
+        "average_price": 2500.75,
+        "last_price": 2550.25,
+        "close_price": 2540.00,
+        "pnl": 495.00,
+        "day_change": 10.25,
+        "day_change_percentage": 0.40
+      },
+      {
+        "tradingsymbol": "TCS",
+        "exchange": "NSE",
+        "instrument_token": 2953217,
+        "isin": "INE467B01029",
+        "product": "CNC",
+        "price": 0,
+        "quantity": 5,
+        "used_quantity": 0,
+        "t1_quantity": 0,
+        "realised_quantity": 5,
+        "authorised_quantity": 5,
+        "authorised_date": "2024-01-10 00:00:00",
+        "opening_quantity": 5,
+        "collateral_quantity": 0,
+        "collateral_type": "",
+        "discrepancy": false,
+        "average_price": 3200.50,
+        "last_price": 3245.75,
+        "close_price": 3230.25,
+        "pnl": 226.25,
+        "day_change": 15.50,
+        "day_change_percentage": 0.48
+      },
+      {
+        "tradingsymbol": "INFY",
+        "exchange": "NSE", 
+        "instrument_token": 408065,
+        "isin": "INE009A01021",
+        "product": "CNC",
+        "price": 0,
+        "quantity": 8,
+        "used_quantity": 0,
+        "t1_quantity": 0,
+        "realised_quantity": 8,
+        "authorised_quantity": 8,
+        "authorised_date": "2024-01-12 00:00:00",
+        "opening_quantity": 8,
+        "collateral_quantity": 0,
+        "collateral_type": "",
+        "discrepancy": false,
+        "average_price": 1450.25,
+        "last_price": 1465.50,
+        "close_price": 1460.75,
+        "pnl": 122.00,
+        "day_change": 4.75,
+        "day_change_percentage": 0.33
+      }
+    ],
+    "positions": {
+      "net": [],
+      "day": []
+    },
+    "orders": [
+      {
+        "account_id": "test_account",
+        "placed_by": "test_user",
+        "order_id": "TEST_ORDER_001",
+        "exchange_order_id": "1100000000001",
+        "parent_order_id": null,
+        "status": "COMPLETE",
+        "status_message": null,
+        "status_message_raw": null,
+        "order_timestamp": "2024-12-29 09:15:32",
+        "exchange_update_timestamp": "2024-12-29 09:15:35",
+        "exchange_timestamp": "2024-12-29 09:15:35",
+        "variety": "regular",
+        "exchange": "NSE",
+        "tradingsymbol": "RELIANCE",
+        "instrument_token": 738561,
+        "order_type": "MARKET",
+        "transaction_type": "BUY",
+        "validity": "DAY",
+        "product": "MIS",
+        "quantity": 1,
+        "disclosed_quantity": 0,
+        "price": 0,
+        "trigger_price": 0,
+        "average_price": 2551.75,
+        "filled_quantity": 1,
+        "pending_quantity": 0,
+        "cancelled_quantity": 0,
+        "market_protection": 0,
+        "meta": {},
+        "tag": "test_order"
+      },
+      {
+        "account_id": "test_account",
+        "placed_by": "test_user",
+        "order_id": "TEST_ORDER_002", 
+        "exchange_order_id": "1100000000002",
+        "parent_order_id": null,
+        "status": "PENDING",
+        "status_message": null,
+        "status_message_raw": null,
+        "order_timestamp": "2024-12-29 10:30:15",
+        "exchange_update_timestamp": null,
+        "exchange_timestamp": null,
+        "variety": "regular",
+        "exchange": "NSE",
+        "tradingsymbol": "TCS",
+        "instrument_token": 2953217,
+        "order_type": "LIMIT",
+        "transaction_type": "SELL",
+        "validity": "DAY",
+        "product": "CNC",
+        "quantity": 2,
+        "disclosed_quantity": 0,
+        "price": 3300.00,
+        "trigger_price": 0,
+        "average_price": 0,
+        "filled_quantity": 0,
+        "pending_quantity": 2,
+        "cancelled_quantity": 0,
+        "market_protection": 0,
+        "meta": {},
+        "tag": "test_limit_order"
+      }
+    ],
+    "order_place_response": {
+      "status": "success",
+      "data": {
+        "order_id": "TEST_ORDER_{{timestamp}}"
+      }
+    },
+    "order_modify_response": {
+      "status": "success",
+      "data": {
+        "order_id": "TEST_ORDER_{{order_id}}"
+      }
+    },
+    "order_cancel_response": {
+      "status": "success", 
+      "data": {
+        "order_id": "TEST_ORDER_{{order_id}}"
+      }
+    },
+    "instruments": {
+      "NSE": [
+        {
+          "instrument_token": 738561,
+          "exchange_token": 2886,
+          "tradingsymbol": "RELIANCE",
+          "name": "RELIANCE INDUSTRIES LTD",
+          "last_price": 2550.25,
+          "expiry": "",
+          "strike": 0,
+          "tick_size": 0.05,
+          "lot_size": 1,
+          "instrument_type": "EQ",
+          "segment": "NSE",
+          "exchange": "NSE"
+        },
+        {
+          "instrument_token": 2953217,
+          "exchange_token": 11543,
+          "tradingsymbol": "TCS",
+          "name": "TATA CONSULTANCY SERVICES LTD",
+          "last_price": 3245.75,
+          "expiry": "",
+          "strike": 0,
+          "tick_size": 0.05,
+          "lot_size": 1,
+          "instrument_type": "EQ",
+          "segment": "NSE",
+          "exchange": "NSE"
+        },
+        {
+          "instrument_token": 408065,
+          "exchange_token": 1594,
+          "tradingsymbol": "INFY",
+          "name": "INFOSYS LTD",
+          "last_price": 1465.50,
+          "expiry": "",
+          "strike": 0,
+          "tick_size": 0.05,
+          "lot_size": 1,
+          "instrument_type": "EQ",
+          "segment": "NSE",
+          "exchange": "NSE"
+        },
+        {
+          "instrument_token": 5633,
+          "exchange_token": 22,
+          "tradingsymbol": "HDFC",
+          "name": "HDFC LTD",
+          "last_price": 2850.90,
+          "expiry": "",
+          "strike": 0,
+          "tick_size": 0.05,
+          "lot_size": 1,
+          "instrument_type": "EQ",
+          "segment": "NSE",
+          "exchange": "NSE"
+        },
+        {
+          "instrument_token": 348929,
+          "exchange_token": 1363,
+          "tradingsymbol": "ICICIBANK",
+          "name": "ICICI BANK LTD",
+          "last_price": 1205.35,
+          "expiry": "",
+          "strike": 0,
+          "tick_size": 0.05,
+          "lot_size": 1,
+          "instrument_type": "EQ",
+          "segment": "NSE",
+          "exchange": "NSE"
+        }
+      ],
+      "BSE": [
+        {
+          "instrument_token": 500325,
+          "exchange_token": 500325,
+          "tradingsymbol": "RELIANCE",
+          "name": "RELIANCE INDUSTRIES LTD",
+          "last_price": 2549.85,
+          "expiry": "",
+          "strike": 0,
+          "tick_size": 0.05,
+          "lot_size": 1,
+          "instrument_type": "EQ",
+          "segment": "BSE",
+          "exchange": "BSE"
+        }
+      ]
+    },
+    "margins": {
+      "equity": {
+        "enabled": true,
+        "net": 50000.75,
+        "available": {
+          "adhoc_margin": 0,
+          "cash": 45000.50,
+          "opening_balance": 45000.50,
+          "live_balance": 45000.50,
+          "collateral": 5000.25,
+          "intraday_payin": 0
+        },
+        "utilised": {
+          "debits": 1250.25,
+          "exposure": 8750.75,
+          "m2m_realised": 0,
+          "m2m_unrealised": 145.50,
+          "option_premium": 0,
+          "payout": 0,
+          "span": 2500.00,
+          "holding_sales": 0,
+          "turnover": 0,
+          "liquid_collateral": 0,
+          "stock_collateral": 0
+        }
+      }
+    },
+    "ticker_data": [
+      {
+        "mode": "full",
+        "instrument_token": 738561,
+        "last_price": 2550.25,
+        "last_quantity": 1,
+        "average_price": 2548.75,
+        "volume": 125000,
+        "buy_quantity": 15000,
+        "sell_quantity": 12000,
+        "ohlc": {
+          "open": 2545.00,
+          "high": 2560.75,
+          "low": 2540.25,
+          "close": 2540.00
+        },
+        "net_change": 10.25,
+        "oi": 0,
+        "oi_day_high": 0,
+        "oi_day_low": 0,
+        "timestamp": "2024-12-29T10:30:00+05:30",
+        "depth": {
+          "buy": [
+            {"quantity": 100, "price": 2550.00, "orders": 1},
+            {"quantity": 200, "price": 2549.95, "orders": 2},
+            {"quantity": 150, "price": 2549.90, "orders": 1},
+            {"quantity": 300, "price": 2549.85, "orders": 3},
+            {"quantity": 250, "price": 2549.80, "orders": 2}
+          ],
+          "sell": [
+            {"quantity": 180, "price": 2550.30, "orders": 2},
+            {"quantity": 220, "price": 2550.35, "orders": 1},
+            {"quantity": 160, "price": 2550.40, "orders": 2},
+            {"quantity": 290, "price": 2550.45, "orders": 3},
+            {"quantity": 170, "price": 2550.50, "orders": 1}
+          ]
+        }
+      }
+    ],
+    "error_responses": {
+      "invalid_token": {
+        "status": "error",
+        "message": "Invalid token",
+        "error_type": "TokenException"
+      },
+      "expired_token": {
+        "status": "error", 
+        "message": "Token expired",
+        "error_type": "TokenException"
+      },
+      "rate_limited": {
+        "status": "error",
+        "message": "Rate limit exceeded",
+        "error_type": "NetworkException"
+      },
+      "network_error": {
+        "status": "error",
+        "message": "Network timeout",
+        "error_type": "NetworkException"
+      },
+      "insufficient_funds": {
+        "status": "error",
+        "message": "Insufficient funds",
+        "error_type": "InputException"
+      },
+      "invalid_order": {
+        "status": "error",
+        "message": "Invalid order parameters",
+        "error_type": "InputException"
+      }
+    }
+  },
+  "test_scenarios": {
+    "valid_authentication": {
+      "access_token": "test_valid_access_token_123456789",
+      "expected_response": "profile"
+    },
+    "expired_authentication": {
+      "access_token": "test_expired_access_token_987654321", 
+      "expected_response": "expired_token"
+    },
+    "invalid_authentication": {
+      "access_token": "test_invalid_access_token_000000000",
+      "expected_response": "invalid_token"
+    },
+    "rate_limited_scenario": {
+      "access_token": "rate_limited_token",
+      "expected_response": "rate_limited"
+    },
+    "network_error_scenario": {
+      "access_token": "network_error_token",
+      "expected_response": "network_error"
+    }
+  }
+}

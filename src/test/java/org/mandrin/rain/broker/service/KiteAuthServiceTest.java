@@ -3,14 +3,17 @@ package org.mandrin.rain.broker.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpSession;
-import org.mandrin.rain.broker.config.KiteConstants;
+import org.springframework.core.env.Environment;
+import org.mockito.Mockito;
+import org.mandrin.rain.broker.config.ApiConstants;
 import static org.junit.jupiter.api.Assertions.*;
 
 class KiteAuthServiceTest {
     private final KiteAuthService kiteAuthService;
 
     public KiteAuthServiceTest() {
-        kiteAuthService = new KiteAuthService();
+        Environment mockEnvironment = Mockito.mock(Environment.class);
+        kiteAuthService = new KiteAuthService(mockEnvironment);
         // Use reflection to set private fields for testing
         setField(kiteAuthService, "apiKey", "test_key");
         setField(kiteAuthService, "apiSecret", "test_secret");

@@ -39,12 +39,24 @@
         <div id="subscribe-row" style="margin-top:40px;">
             <h2>Subscribe Instrument</h2>
             <form id="api-action-form" style="margin-bottom:16px;">
-                <select id="exchange-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;"></select>
-                <select id="type-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;"></select>
-                <input type="text" id="api-input" list="name-list" placeholder="Instrument name" style="padding:8px;width:40%;border-radius:4px;border:1px solid #ccc;">
-                <datalist id="name-list"></datalist>
-                <button type="submit">Subscribe Ticker</button>
-                <button type="button" id="refresh-btn" style="background:#3498db;margin-left:8px;">Refresh</button>
+                <div style="margin-bottom:12px;">
+                    <select id="exchange-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;"></select>
+                    <select id="type-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;margin-left:8px;"></select>
+                    <button type="button" id="refresh-btn" style="background:#3498db;margin-left:8px;">Refresh Data</button>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <select id="underlying-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;width:180px;">
+                        <option value="">Select underlying asset...</option>
+                    </select>
+                    <select id="expiry-select" style="padding:8px;border-radius:4px;border:1px solid #ccc;margin-left:8px;width:150px;">
+                        <option value="">Select expiry date...</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="api-input" list="name-list" placeholder="Search instruments..." style="padding:8px;width:60%;border-radius:4px;border:1px solid #ccc;">
+                    <datalist id="name-list"></datalist>
+                    <button type="submit" style="margin-left:8px;">Subscribe Ticker</button>
+                </div>
             </form>
             <button id="disconnect-btn" style="background:#888;">Disconnect Ticker</button>
             <div id="api-action-result" style="margin-top:16px;"></div>
@@ -52,15 +64,38 @@
         <div id="order-row" style="margin-top:40px;">
             <h2>Place Order</h2>
             <form id="order-form" style="margin-bottom:16px;">
-                <input type="number" id="order-qty" placeholder="Qty" style="padding:8px;width:60px;border-radius:4px;border:1px solid #ccc;">
-                <input type="number" id="order-price" placeholder="Price" style="padding:8px;width:80px;border-radius:4px;border:1px solid #ccc;">
-                <select id="order-side" style="padding:8px;border-radius:4px;border:1px solid #ccc;">
-                    <option value="BUY">BUY</option>
-                    <option value="SELL">SELL</option>
-                </select>
-                <button type="submit">Place Order</button>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="order-name" list="name-list" placeholder="Instrument name" style="padding:8px;width:40%;border-radius:4px;border:1px solid #ccc;">
+                    <input type="number" id="order-qty" placeholder="Qty" style="padding:8px;width:80px;border-radius:4px;border:1px solid #ccc;">
+                    <input type="number" step="0.01" id="order-price" placeholder="Price (optional for market orders)" style="padding:8px;width:150px;border-radius:4px;border:1px solid #ccc;">
+                </div>
+                <div style="margin-bottom:12px;">
+                    <select id="order-side" style="padding:8px;border-radius:4px;border:1px solid #ccc;">
+                        <option value="BUY">BUY</option>
+                        <option value="SELL">SELL</option>
+                    </select>
+                    <select id="order-type" style="padding:8px;border-radius:4px;border:1px solid #ccc;margin-left:8px;">
+                        <option value="MARKET">MARKET</option>
+                        <option value="LIMIT">LIMIT</option>
+                    </select>
+                    <select id="order-product" style="padding:8px;border-radius:4px;border:1px solid #ccc;margin-left:8px;">
+                        <option value="MIS">MIS (Intraday)</option>
+                        <option value="CNC">CNC (Delivery)</option>
+                        <option value="NRML">NRML (Normal)</option>
+                    </select>
+                </div>
+                <button type="submit" style="background:#27ae60;">Submit Order</button>
+                <button type="button" id="validate-order" style="background:#f39c12;margin-left:8px;">Validate First</button>
             </form>
             <div id="order-result" style="margin-top:16px;"></div>
+        </div>
+        
+        <div id="orders-history-row" style="margin-top:40px;">
+            <h2>Recent Orders</h2>
+            <button id="refresh-orders" style="background:#3498db;margin-bottom:16px;">Refresh Orders</button>
+            <div id="orders-table-container">
+                <p>Loading orders...</p>
+            </div>
         </div>
         <div id="ticker-row">
             <h2>Live Ticker Feed</h2>
@@ -70,12 +105,33 @@
         </div>
     </div>
     <!-- Modular JS includes -->
+    <!-- Load configuration first -->
+    <script src="/js/config.js"></script>
     <script src="/js/session.js"></script>
     <script src="/js/portfolio.js"></script>
     <script src="/js/instruments.js"></script>
     <script src="/js/ticker.js"></script>
     <script src="/js/orders.js"></script>
     <script src="/js/ui.js"></script>
+    
+    <!-- Initialize application after all scripts are loaded -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load configuration first
+            await loadAppConfig();
+            
+            // Initialize components that depend on configuration
+            if (typeof initializeInstruments === 'function') {
+                initializeInstruments();
+            }
+            if (typeof initializeTicker === 'function') {
+                initializeTicker();
+            }
+            if (typeof initializeSession === 'function') {
+                initializeSession();
+            }
+        });
+    </script>
     <!-- End modular JS includes -->
     <script th:inline="javascript">
     /*<![CDATA[*/
